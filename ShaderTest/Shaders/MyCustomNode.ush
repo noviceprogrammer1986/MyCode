@@ -1,0 +1,37 @@
+
+struct MyFunctions
+{
+    float3 GaussianBlur(float2 uv)
+    {
+        float3 res = 0;
+        float2 textureSize;
+        inputTexture.GetDimensions(textureSize.x, textureSize.y);
+        float2 invSize = float2(1.0 / textureSize.x, 1.0 / textureSize.y);
+
+        float weights[] =
+        {
+            0.01, 0.02, 0.04, 0.02, 0.01,
+            0.02, 0.04, 0.08, 0.04, 0.02,
+            0.04, 0.08, 0.16, 0.08, 0.04,
+            0.02, 0.04, 0.08, 0.04, 0.02,
+            0.01, 0.02, 0.04, 0.02, 0.01
+        };
+        float offsets[] = { -2, -1, 0, 1, 2 };
+
+        uv *= 0.5;
+        for (int i = 0; i < 5; ++i)
+        {
+            float v = uv.y + offsets[i] * invSize.y;
+            for (int j = 0; j < 5; ++j)
+            {
+                float u = uv.x + offsets[j] * invSize.x;
+                float2 uvShifted = uv + float2(u, v);
+                float weight = weights[i * 5 + j];
+                float3 tex = Texture2DSample(inputTexture, inputTextureSampler, uvShifted).rgb;
+                res += tex * weight;
+            }
+        }
+
+        return res;
+    }
+};

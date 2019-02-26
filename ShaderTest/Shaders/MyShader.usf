@@ -1,0 +1,24 @@
+#include "/Engine/Private/Common.ush"
+
+
+RWTexture2D<float> OutputSurface;
+Texture2D<float2> TextureParameter;
+
+[numthreads(32, 32, 1)]
+void MainCS( uint3 ThreadID : SV_DispatchThreadID )
+{
+    float2 iResolution;
+    OutputSurface.GetDimensions(iResolution.x, iResolution.y);
+    float2 uv = ThreadID.xy / iResolution.xy;
+
+    float greyScaleValue = 0.0;
+    for (int i = 0; i < 10000; ++i)
+    {
+        float2 packedValue = TextureParameter.Load(int3(i, 0, 0));
+        float dist = distance(uv, packedValue);
+        greyScaleValue += dist < 0.05 ? lerp(1.0, 0.0, dist * 20.0) * 0.005 : 0.0;
+    }
+
+    OutputSurface[ThreadID.xy] = greyScaleValue;
+    //OutputSurface[ThreadID.xy] = MyStruct.a;
+}
