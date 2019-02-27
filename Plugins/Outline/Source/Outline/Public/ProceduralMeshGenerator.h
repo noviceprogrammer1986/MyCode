@@ -67,8 +67,6 @@ public:
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
-	void AutoFill();
 #endif
 
 protected:
@@ -78,9 +76,6 @@ protected:
 public:	
 	UPROPERTY(EditAnywhere, Category = "Outline")
 		FString ObjFilePath;
-
-	UPROPERTY(EditAnywhere, Category = "Outline")
-		UMaterialInterface* DefaultOutlineMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "Outline")
 		TArray<FOutline> Outlines;

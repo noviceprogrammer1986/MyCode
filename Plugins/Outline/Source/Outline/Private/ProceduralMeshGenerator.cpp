@@ -5,18 +5,9 @@
 #include "FileManager.h"
 #include "Components/StaticMeshComponent.h"
 #include "Paths.h"
-
 #include <fstream>
 #include <sstream>
 #include <string>
-
-#if WITH_EDITOR
-#include "Editor/EditorEngine.h"
-extern UNREALED_API UEditorEngine* GEditor;
-#include "Engine/Selection.h"
-#include "Engine/StaticMeshActor.h"
-#include "Engine/StaticMesh.h"
-#endif
 
 
 // Sets default values
@@ -304,54 +295,6 @@ void AProceduralMeshGenerator::PostEditChangeProperty(FPropertyChangedEvent& Pro
 			if (Outlines[i].RefActor->GetName().Contains(SearchName))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("%s:[%d]"), *SearchName, i);
-			}
-		}
-	}
-}
-
-void AProceduralMeshGenerator::AutoFill()
-{
-	TArray<FString> ObjFiles;
-	IFileManager::Get().FindFiles(ObjFiles, *(FPaths::ProjectContentDir() + ObjFilePath), TEXT("obj"));
-	if (ObjFiles.Num() == 0)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No obj files found!"));
-		return;
-	}
-	if (DefaultOutlineMaterial == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Please set default material!"));
-		return;
-	}
-
-	for (int32 i = 0; i < GEditor->GetSelectedActorCount(); ++i)
-	{
-		AStaticMeshActor* MyActor = Cast<AStaticMeshActor>(GEditor->GetSelectedActors()->GetSelectedObject(i));
-		if (MyActor)
-		{
-			bool bNewActor = true;
-			for (const auto& Outline : Outlines)
-			{
-				if (MyActor == Outline.RefActor)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[%s] already added"), *MyActor->GetName());
-					bNewActor = false;
-					break;
-				}
-			}
-
-			if (bNewActor)
-			{
-				//GEditor->AddOnScreenDebugMessage(-1, 4.0, FColor::Green, MyActor->GetStaticMeshComponent()->GetStaticMesh()->GetName());
-				FString MeshName = MyActor->GetStaticMeshComponent()->GetStaticMesh()->GetName();
-				if (ObjFiles.Contains(MeshName + ".obj"))
-				{
-					FOutline NewOutline;
-					NewOutline.RefActor = MyActor;
-					NewOutline.ObjFilename = MeshName;
-					NewOutline.OutlineMaterial = DefaultOutlineMaterial;
-					Outlines.Add(NewOutline);
-				}
 			}
 		}
 	}

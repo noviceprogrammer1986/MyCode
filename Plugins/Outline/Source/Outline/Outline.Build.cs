@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class Outline : ModuleRules
 {
@@ -43,18 +44,6 @@ public class Outline : ModuleRules
 			}
 			);
 		
-        if (Target.Type == TargetRules.TargetType.Editor)
-        {
-            PrivateDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "UnrealEd",
-                "Projects",
-                "InputCore",
-                "LevelEditor",
-            }
-            );
-        }
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
@@ -62,5 +51,20 @@ public class Outline : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+
+        if(Target.Type == TargetRules.TargetType.Editor)
+        {
+            PrivateDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "PropertyEditor",
+                "RawMesh",
+                "AssetRegistry"
+			}
+            );
+
+            //PrivateIncludePaths.Add(Path.GetFullPath(Target.RelativeEnginePath)
+            //    + "Plugins/Runtime/ProceduralMeshComponent/Source/ProceduralMeshComponentEditor/Private");
+        }
 	}
 }
